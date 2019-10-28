@@ -1,4 +1,4 @@
-#include <stdio.h>
+ #include <stdio.h>
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
@@ -117,12 +117,21 @@ void versus_jogador(FILE* f) {
 		b = terminou_jogo(tab);
 		if(b == 1){
 			printf("Jogador X venceu\n");
+			fwrite(&b, sizeof(b), 1, f);
+			fseek(f, sizeof(int), SEEK_SET);
+			fwrite(&jogadas, sizeof(jogadas), 1, f);
 			break;
 		}if(b == 0){
 			printf("Jogador O venceu\n");
+			fwrite(&b, sizeof(b), 1, f);
+			fseek(f, sizeof(int), SEEK_SET);
+			fwrite(&jogadas, sizeof(jogadas), 1, f);
+			fseek(f, sizeof(int), SEEK_SET);
+			fwrite(&jogadas, sizeof(jogadas), 1, f);
 			break;
 		}if(jogadas == 9){
 			printf("Empate\n");
+			fwrite(&b, sizeof(b), 1, f);
 		}
 		printf("0 | 1 | 2\n3 | 4 | 5\n6 | 7 | 8\n");
 		do{
@@ -135,12 +144,21 @@ void versus_jogador(FILE* f) {
 		b = terminou_jogo(tab);
 		if(b == 1){
 			printf("Jogador X venceu\n");
+			fwrite(&b, sizeof(b), 1, f);
+			fseek(f, sizeof(int), SEEK_SET);
+			fwrite(&jogadas, sizeof(jogadas), 1, f);
 			break;
 		}if(b == 0){
 			printf("Jogador O venceu\n");
+			fwrite(&b, sizeof(b), 1, f);
+			fseek(f, sizeof(int), SEEK_SET);
+			fwrite(&jogadas, sizeof(jogadas), 1, f);
 			break;
 		}if(jogadas == 9){
 			printf("Empate\n");
+			fwrite(&b, sizeof(b), 1, f);
+			fseek(f, sizeof(int), SEEK_SET);
+			fwrite(&jogadas, sizeof(jogadas), 1, f);
 		}
 	}while(b != 0 || b != 1);
 	
@@ -148,6 +166,7 @@ void versus_jogador(FILE* f) {
 
 void versus_computador(FILE* f){
 	int a, b, c, d, e, g;
+	int jogadas = 0;
 	
 	int tab[9] = {2, 2, 2, 2, 2, 2, 2, 2, 2};
 	
@@ -174,15 +193,31 @@ void versus_computador(FILE* f){
 			scanf("%d", &a);	
 		}while(a < 0 || a > 8);
 		tab[a] = e;
+		jogadas ++;
+		if(jogadas == 1){
+			fseek(f, 2*sizeof(int), SEEK_SET);
+			fwrite(&tab, 8*sizeof(int), 1, f);
+		}
 		imprimir_tabuleiro(tab);
 		printf("\n");
 		b = terminou_jogo(tab);
 		if(b == e){
 			printf("Voce venceu\n");
+			fwrite(&b, sizeof(b), 1, f);
+			fseek(f, sizeof(int), SEEK_SET);
+			fwrite(&jogadas, sizeof(jogadas), 1, f);
 			break;
 		}if(b == g){
 			printf("Voce perdeu\n");
+			fwrite(&b, sizeof(b), 1, f);
+			fseek(f, sizeof(int), SEEK_SET);
+			fwrite(&jogadas, sizeof(jogadas), 1, f);
 			break;
+		}if(jogadas == 9){
+			printf("Empate\n");
+			fwrite(&b, sizeof(b), 1, f);
+			fseek(f, sizeof(int), SEEK_SET);
+			fwrite(&jogadas, sizeof(jogadas), 1, f);
 		}
 		
 		srand(time(NULL));
@@ -190,15 +225,27 @@ void versus_computador(FILE* f){
 			d = rand() % 9;
 		}while(tab[d] == e);
 		tab[d] = g;
+		jogadas ++;
 		imprimir_tabuleiro(tab);
 		printf("\n");
 		b = terminou_jogo(tab);
 		if(b == e){
 			printf("Voce venceu\n");
+			fwrite(&b, sizeof(b), 1, f);
+			fseek(f, sizeof(int), SEEK_SET);
+			fwrite(&jogadas, sizeof(jogadas), 1, f);
 			break;
 		}if(b == g){
 			printf("Voce perdeu\n");
+			fwrite(&b, sizeof(b), 1, f);
+			fseek(f, sizeof(int), SEEK_SET);
+			fwrite(&jogadas, sizeof(jogadas), 1, f);
 			break;
+		}if(jogadas == 9){
+			printf("Empate\n");
+			fwrite(&b, sizeof(b), 1, f);
+			fseek(f, sizeof(int), SEEK_SET);
+			fwrite(&jogadas, sizeof(jogadas), 1, f);
 		}
 	}while(b != 0 || b != 1);
 }
