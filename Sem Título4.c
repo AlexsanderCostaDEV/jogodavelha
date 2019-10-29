@@ -11,8 +11,7 @@ int main(void){
 	int c;
 	
 //	fseek(ff, -1*sizeof(c), SEEK_END);
-	while(!feof(ff)){
-		fread(&c, sizeof(c), 1, ff);
+	while(fread(&c, sizeof(c), 1, ff)){
 		printf("%d\n\n", c);
 	}
 	
