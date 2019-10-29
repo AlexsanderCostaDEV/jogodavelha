@@ -1,4 +1,4 @@
- #include <stdio.h>
+#include <stdio.h>
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
@@ -12,6 +12,11 @@ void imprimir_tabuleiro(int []);
 void salvar_resultado (FILE*, int);
 int terminou_jogo(int []);
 void versus_computador(FILE* f);
+void salvar_duracao (FILE*, int);
+void salvar_jogada (FILE*, int[]);
+FILE* carregar (char *);
+void menu_carregar_arquivo();
+
 
 int main(int argc, char **argv) {
 
@@ -37,7 +42,7 @@ void menu_principal() {
 			break;
 
 		case 2:
-			//menu_carregar_arquivo();
+			menu_carregar_arquivo();
 			break;
 
 		case 9:
@@ -103,7 +108,6 @@ void versus_jogador(FILE* f) {
 		system("pause");
 		exit(1);
 	}
-	//fseek(f, 2*sizeof(int), SEEK_SET);
 	printf("'O' e 'X', respectivamente\n");
 	do{
 		printf("0 | 1 | 2\n3 | 4 | 5\n6 | 7 | 8\n");
@@ -113,6 +117,10 @@ void versus_jogador(FILE* f) {
 		}while(a < 0 || a > 8);
 		tab[a] = 0;
 		jogadas ++;
+		if(jogadas == 1){
+			fseek(f, 2*sizeof(int), SEEK_SET);
+			fwrite(&tab, 8*sizeof(int), 1, f);
+		}
 		imprimir_tabuleiro(tab);
 		b = terminou_jogo(tab);
 		if(b == 1){
@@ -126,12 +134,11 @@ void versus_jogador(FILE* f) {
 			fwrite(&b, sizeof(b), 1, f);
 			fseek(f, sizeof(int), SEEK_SET);
 			fwrite(&jogadas, sizeof(jogadas), 1, f);
-			fseek(f, sizeof(int), SEEK_SET);
-			fwrite(&jogadas, sizeof(jogadas), 1, f);
 			break;
 		}if(jogadas == 9){
 			printf("Empate\n");
 			fwrite(&b, sizeof(b), 1, f);
+			break;
 		}
 		printf("0 | 1 | 2\n3 | 4 | 5\n6 | 7 | 8\n");
 		do{
@@ -159,6 +166,7 @@ void versus_jogador(FILE* f) {
 			fwrite(&b, sizeof(b), 1, f);
 			fseek(f, sizeof(int), SEEK_SET);
 			fwrite(&jogadas, sizeof(jogadas), 1, f);
+			break;
 		}
 	}while(b != 0 || b != 1);
 	
@@ -175,25 +183,15 @@ void versus_computador(FILE* f){
 		system("pause");
 		exit(1);
 	}
-	//fseek(f, 2*sizeof(int), SEEK_SET);
-	printf("Escolha 1-(X) ou 2-(O) para jogar: ");
-	scanf("%d", &c);
-	if(c == 1){
-		e = 1;
-		g = 0;
-	}
-	if(c == 2){
-		e = 0;
-		g = 1;
-	}
+	printf("'O' Jogador e 'X' Computador, respectivamente\n");
 	do{
 		printf("0 | 1 | 2\n3 | 4 | 5\n6 | 7 | 8\n");
 		do{
 			printf("Entre com uma posicao entre 0 e 8 conforme o exemplo acima: ");
 			scanf("%d", &a);	
 		}while(a < 0 || a > 8);
-		tab[a] = e;
-		jogadas ++;
+		tab[a] = 0;
+		jogadas++;
 		if(jogadas == 1){
 			fseek(f, 2*sizeof(int), SEEK_SET);
 			fwrite(&tab, 8*sizeof(int), 1, f);
@@ -201,14 +199,8 @@ void versus_computador(FILE* f){
 		imprimir_tabuleiro(tab);
 		printf("\n");
 		b = terminou_jogo(tab);
-		if(b == e){
+		if(b == 0){
 			printf("Voce venceu\n");
-			fwrite(&b, sizeof(b), 1, f);
-			fseek(f, sizeof(int), SEEK_SET);
-			fwrite(&jogadas, sizeof(jogadas), 1, f);
-			break;
-		}if(b == g){
-			printf("Voce perdeu\n");
 			fwrite(&b, sizeof(b), 1, f);
 			fseek(f, sizeof(int), SEEK_SET);
 			fwrite(&jogadas, sizeof(jogadas), 1, f);
@@ -218,24 +210,19 @@ void versus_computador(FILE* f){
 			fwrite(&b, sizeof(b), 1, f);
 			fseek(f, sizeof(int), SEEK_SET);
 			fwrite(&jogadas, sizeof(jogadas), 1, f);
+			break;
 		}
 		
 		srand(time(NULL));
 		do{
 			d = rand() % 9;
-		}while(tab[d] == e);
-		tab[d] = g;
-		jogadas ++;
+		}while(tab[d] != 2);
+		tab[d] = 1;
+		jogadas++;
 		imprimir_tabuleiro(tab);
 		printf("\n");
 		b = terminou_jogo(tab);
-		if(b == e){
-			printf("Voce venceu\n");
-			fwrite(&b, sizeof(b), 1, f);
-			fseek(f, sizeof(int), SEEK_SET);
-			fwrite(&jogadas, sizeof(jogadas), 1, f);
-			break;
-		}if(b == g){
+		if(b == 1){
 			printf("Voce perdeu\n");
 			fwrite(&b, sizeof(b), 1, f);
 			fseek(f, sizeof(int), SEEK_SET);
@@ -246,6 +233,7 @@ void versus_computador(FILE* f){
 			fwrite(&b, sizeof(b), 1, f);
 			fseek(f, sizeof(int), SEEK_SET);
 			fwrite(&jogadas, sizeof(jogadas), 1, f);
+			break;
 		}
 	}while(b != 0 || b != 1);
 }
@@ -297,10 +285,85 @@ int terminou_jogo(int tab[]) {
 
 	// verificando diagonal
 	if (tab[2] == tab[4] && tab[4] == tab[6]) {
-		return tab[0];
+		return tab[2];
 	}
 
 	return -1;
+}
+
+void menu_carregar_arquivo() {
+	FILE *f;
+	int opcao, n;
+	char filename[15];
+
+	f = NULL;
+
+	do {
+		printf("~~~~~~~~~~~~~ CARREGAR ARQUIVO ~~~~~~~~~~~~~~~~~\n"
+					"[1] - Carregar Arquivo\n"
+					"[2] - Exibir resultado\n"
+					"[3] - Exibir numero de jogadas\n"
+					"[4] - Exibir jogada\n"
+					"[5] - Retornar ao menu anterior\n"
+					"---------\n");
+		opcao = ler_opcao();
+
+		switch(opcao) {
+
+		case 1:
+			printf("Entre com o nome do arquivo: ");
+			scanf("%s", filename);
+
+			f = carregar(filename);
+			break;
+
+		case 2:
+			if (f == NULL) {
+				printf("É preciso primeiramente carregar um arquivo!");
+			}
+			else {
+				//exibir_resultado(f);
+			}
+			break;
+
+		case 3:
+			if (f == NULL) {
+						printf("É preciso primeiramente carregar um arquivo!");
+			}
+			else {
+				//exibir_duracao(f);
+			}
+			break;
+
+		case 4:
+			if (f == NULL) {
+						printf("É preciso primeiramente carregar um arquivo!");
+			}
+			else {
+				printf("Entre com a jogada a ser exibida: ");
+				scanf("%d", &n);
+
+				//exibir_jogada(f, n);
+			}
+			break;
+
+		case 5:
+			return;
+			break;
+		}
+	} while (opcao != 5);
+}
+
+void salvar_duracao (FILE *f, int dur) {
+	//TODO
+}
+
+void salvar_jogada (FILE *f, int tab[]) {
+	// TODO
+}
+
+FILE *carregar(char* filename) {
+	//todo
 }
 
 void salvar_resultado (FILE *f, int res) {
