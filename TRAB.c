@@ -99,9 +99,7 @@ FILE* inicializar_arquivo() {
 }
 
 void versus_jogador(FILE* f) {
-	int a;
-	int b;
-	int jogadas = 0;
+	int a, b, jogadas = 0;
 	
 	int tab[9] = {2, 2, 2, 2, 2, 2, 2, 2, 2};
 	
@@ -115,14 +113,13 @@ void versus_jogador(FILE* f) {
 		printf("0 | 1 | 2\n3 | 4 | 5\n6 | 7 | 8\n");
 		do{
 			printf("Entre com uma posicao entre 0 e 8 conforme o exemplo acima: ");
-			scanf("%d", &a);	
+			scanf("%d", &a);
+			if(tab[a] == 0 || tab[a] == 1){a=9; printf("jogada invalida!\n\n");}
 		}while(a < 0 || a > 8);
 		tab[a] = 0;
 		jogadas ++;
 		if(jogadas == 1){
 			salvar_jogada (f, tab);
-			//fseek(f, 2*sizeof(int), SEEK_SET);
-			//fwrite(&tab, 8*sizeof(int), 1, f);
 		}
 		imprimir_tabuleiro(tab);
 		b = terminou_jogo(tab);
@@ -130,29 +127,23 @@ void versus_jogador(FILE* f) {
 			printf("Jogador X venceu\n");
 			salvar_resultado (f, b);
 			salvar_duracao (f, jogadas);
-			/*fwrite(&b, sizeof(b), 1, f);
-			fseek(f, sizeof(int), SEEK_SET);
-			fwrite(&jogadas, sizeof(jogadas), 1, f);*/
 			break;
 		}if(b == 0){
 			printf("Jogador O venceu\n");
 			salvar_resultado (f, b);
 			salvar_duracao (f, jogadas);
-			/*fwrite(&b, sizeof(b), 1, f);
-			fseek(f, sizeof(int), SEEK_SET);
-			fwrite(&jogadas, sizeof(jogadas), 1, f);*/
 			break;
 		}if(jogadas == 9){
 			printf("Empate\n");
 			salvar_resultado (f, b);
 			salvar_duracao (f, jogadas);
-			//fwrite(&b, sizeof(b), 1, f);
 			break;
 		}
 		printf("0 | 1 | 2\n3 | 4 | 5\n6 | 7 | 8\n");
 		do{
 			printf("Entre com uma posicao entre 0 e 8 conforme o exemplo acima: ");
 			scanf("%d", &a);	
+			if(tab[a] == 0 || tab[a] == 1){a=9; printf("jogada invalida!\n\n");}
 		}while(a < 0 || a > 8);
 		tab[a] = 1;
 		jogadas ++;
@@ -162,25 +153,16 @@ void versus_jogador(FILE* f) {
 			printf("Jogador X venceu\n");
 			salvar_resultado (f, b);
 			salvar_duracao (f, jogadas);
-			/*fwrite(&b, sizeof(b), 1, f);
-			fseek(f, sizeof(int), SEEK_SET);
-			fwrite(&jogadas, sizeof(jogadas), 1, f);*/
 			break;
 		}if(b == 0){
 			printf("Jogador O venceu\n");
 			salvar_resultado (f, b);
 			salvar_duracao (f, jogadas);
-			/*fwrite(&b, sizeof(b), 1, f);
-			fseek(f, sizeof(int), SEEK_SET);
-			fwrite(&jogadas, sizeof(jogadas), 1, f);*/
 			break;
 		}if(jogadas == 9){
 			printf("Empate\n");
 			salvar_resultado (f, b);
 			salvar_duracao (f, jogadas);
-			/*fwrite(&b, sizeof(b), 1, f);
-			fseek(f, sizeof(int), SEEK_SET);
-			fwrite(&jogadas, sizeof(jogadas), 1, f);*/
 			break;
 		}
 	}while(b != 0 || b != 1);
@@ -206,13 +188,12 @@ void versus_computador(FILE* f){
 		do{
 			printf("Entre com uma posicao entre 0 e 8 conforme o exemplo acima: ");
 			scanf("%d", &a);	
+			if(tab[a] == 0 || tab[a] == 1){a=9; printf("jogada invalida!\n\n");}
 		}while(a < 0 || a > 8);
 		tab[a] = 0;
 		jogadas++;
 		if(jogadas == 1){
 			salvar_jogada (f, tab);
-			//fseek(f, 2*sizeof(int), SEEK_SET);
-			//fwrite(&tab, 8*sizeof(int), 1, f);
 		}
 		imprimir_tabuleiro(tab);
 		printf("\n");
@@ -220,18 +201,12 @@ void versus_computador(FILE* f){
 		if(b == 0){
 			printf("Voce venceu\n");
 			salvar_resultado (f, b); 
-			//fwrite(&b, sizeof(b), 1, f);
-			//fseek(f, sizeof(int), SEEK_SET);
 			salvar_duracao (f, jogadas);
-			//fwrite(&jogadas, sizeof(jogadas), 1, f);
 			break;
 		}if(jogadas == 9){
 			printf("Empate\n");
 			salvar_resultado (f, b);
-			//fwrite(&b, sizeof(b), 1, f);
 			salvar_duracao (f, jogadas);
-			//fseek(f, sizeof(int), SEEK_SET);
-			//fwrite(&jogadas, sizeof(jogadas), 1, f);
 			break;
 		}
 		
@@ -247,18 +222,12 @@ void versus_computador(FILE* f){
 		if(b == 1){
 			printf("Voce perdeu\n");
 			salvar_resultado (f, b); 
-			//fwrite(&b, sizeof(b), 1, f);
 			salvar_duracao (f, jogadas);
-			//fseek(f, sizeof(int), SEEK_SET);
-			//fwrite(&jogadas, sizeof(jogadas), 1, f);
 			break;
 		}if(jogadas == 9){
 			printf("Empate\n");
 			salvar_resultado (f, b); 
-			//fwrite(&b, sizeof(b), 1, f);
 			salvar_duracao (f, jogadas);
-			//fseek(f, sizeof(int), SEEK_SET);
-			//fwrite(&jogadas, sizeof(jogadas), 1, f);
 			break;
 		}
 	}while(b != 0 || b != 1);
