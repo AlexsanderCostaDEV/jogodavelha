@@ -20,6 +20,8 @@ void exibir_resultado(FILE* f);
 void exibir_duracao(FILE* f);
 void exibir_jogada(FILE* f, int n);
 
+void gen_random(char *s, const int len);
+
 int main(int argc, char **argv) {
 
 	menu_principal();
@@ -95,14 +97,25 @@ void menu_jogar() {
 }
 
 FILE* inicializar_arquivo() {
-	fopen("inicio.bin", "wb");
+
+	int stringTam;
+
+	printf("Entre com o tamanho da string");
+	scanf("%d", &stringTam);
+
+	char *stringAleat = malloc(stringTam + 1);
+
+    gen_random(stringAleat, stringTam);
+
+	fopen(stringAleat, "wb");
+
 }
 
 void versus_jogador(FILE* f) {
 	int a, b, jogadas = 0;
-	
+
 	int tab[9] = {2, 2, 2, 2, 2, 2, 2, 2, 2};
-	
+
 	if(f == NULL){
 		printf("Nao foi possivel abrir o arquivo.\n");
 		system("pause");
@@ -142,7 +155,7 @@ void versus_jogador(FILE* f) {
 		printf("0 | 1 | 2\n3 | 4 | 5\n6 | 7 | 8\n");
 		do{
 			printf("Entre com uma posicao entre 0 e 8 conforme o exemplo acima: ");
-			scanf("%d", &a);	
+			scanf("%d", &a);
 			if(tab[a] == 0 || tab[a] == 1){a=9; printf("jogada invalida!\n\n");}
 		}while(a < 0 || a > 8);
 		tab[a] = 1;
@@ -166,28 +179,28 @@ void versus_jogador(FILE* f) {
 			break;
 		}
 	}while(b != 0 || b != 1);
-	
+
 }
 
 void versus_computador(FILE* f){
 	int a, b, d, e, g;
 	int jogadas = 0;
-	
+
 	//TABULEIRO EM BRANCO
 	int tab[9] = {2, 2, 2, 2, 2, 2, 2, 2, 2};
-	
+
 	if(f == NULL){
 		printf("Nao foi possivel abrir o arquivo.\n");
 		system("pause");
 		exit(1);
 	}
-	
+
 	printf("'O' Jogador e 'X' Computador, respectivamente\n");
 	do{
-		printf("0 | 1 | 2\n3 | 4 | 5\n6 | 7 | 8\n");		
+		printf("0 | 1 | 2\n3 | 4 | 5\n6 | 7 | 8\n");
 		do{
 			printf("Entre com uma posicao entre 0 e 8 conforme o exemplo acima: ");
-			scanf("%d", &a);	
+			scanf("%d", &a);
 			if(tab[a] == 0 || tab[a] == 1){a=9; printf("jogada invalida!\n\n");}
 		}while(a < 0 || a > 8);
 		tab[a] = 0;
@@ -200,7 +213,7 @@ void versus_computador(FILE* f){
 		b = terminou_jogo(tab);
 		if(b == 0){
 			printf("Voce venceu\n");
-			salvar_resultado (f, b); 
+			salvar_resultado (f, b);
 			salvar_duracao (f, jogadas);
 			break;
 		}if(jogadas == 9){
@@ -209,7 +222,7 @@ void versus_computador(FILE* f){
 			salvar_duracao (f, jogadas);
 			break;
 		}
-		
+
 		srand(time(NULL));
 		do{
 			d = rand() % 9;
@@ -221,12 +234,12 @@ void versus_computador(FILE* f){
 		b = terminou_jogo(tab);
 		if(b == 1){
 			printf("Voce perdeu\n");
-			salvar_resultado (f, b); 
+			salvar_resultado (f, b);
 			salvar_duracao (f, jogadas);
 			break;
 		}if(jogadas == 9){
 			printf("Empate\n");
-			salvar_resultado (f, b); 
+			salvar_resultado (f, b);
 			salvar_duracao (f, jogadas);
 			break;
 		}
@@ -329,7 +342,7 @@ void menu_carregar_arquivo() {
 
 		case 2:
 			if (f == NULL) {
-				printf("É preciso primeiramente carregar um arquivo!");
+				printf("Ã‰ preciso primeiramente carregar um arquivo!");
 			}
 			else {
 				exibir_resultado(f);
@@ -338,7 +351,7 @@ void menu_carregar_arquivo() {
 
 		case 3:
 			if (f == NULL) {
-						printf("É preciso primeiramente carregar um arquivo!");
+						printf("Ã‰ preciso primeiramente carregar um arquivo!");
 			}
 			else {
 				exibir_duracao(f);
@@ -347,7 +360,7 @@ void menu_carregar_arquivo() {
 
 		case 4:
 			if (f == NULL) {
-						printf("É preciso primeiramente carregar um arquivo!");
+						printf("Ã‰ preciso primeiramente carregar um arquivo!");
 			}
 			else {
 				printf("Entre com a jogada a ser exibida: ");
@@ -385,7 +398,7 @@ void exibir_duracao(FILE* f) {
 void exibir_jogada(FILE* f, int n) {
 	int a;
 	int i;
-	
+
 	if(n == 1){
 		fseek(f, 2*sizeof(int), SEEK_SET);
 		for(i=0; i<9; i++){
@@ -404,8 +417,22 @@ void exibir_jogada(FILE* f, int n) {
 				printf("|");
 			}
 		}
-	}	
+	}
 }
 
 
 
+void gen_random(char *s, const int len) {
+	srand(time(NULL));
+    static const char alphanum[] =
+        "0123456789"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz";
+
+    for (int i = 0; i < len; ++i) {
+        s[i] = alphanum[rand() % (sizeof(alphanum) - 1)];
+    }
+
+    s[len] = 0;
+
+}
