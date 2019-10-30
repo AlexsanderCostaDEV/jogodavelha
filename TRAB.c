@@ -3,25 +3,37 @@
 #include <time.h>
 #include <stdlib.h>
 
+/*
+ * Prototipos
+ */
+void imprimir_tabuleiro(int []);
+void menu_carregar_arquivo();
+void menu_jogar();
 void menu_principal();
 int ler_opcao();
-void menu_jogar();
-FILE* inicializar_arquivo();
-void versus_jogador(FILE*);
-void imprimir_tabuleiro(int []);
-void salvar_resultado (FILE*, int);
 int terminou_jogo(int []);
 void versus_computador(FILE* f);
-void salvar_duracao (FILE*, int);
-void salvar_jogada (FILE*, int[]);
-FILE* carregar (char *);
-void menu_carregar_arquivo();
+void versus_jogador(FILE*);
+
+/*
+ * Prototipos manipulacao de arquivos
+ */
 void exibir_resultado(FILE* f);
 void exibir_duracao(FILE* f);
 void exibir_jogada(FILE* f, int n);
+FILE* carregar (char *);
+FILE* inicializar_arquivo();
+void salvar_resultado (FILE*, int);
+void salvar_duracao (FILE*, int);
+void salvar_jogada (FILE*, int[]);
 
-void gen_random(char *s, const int len);
+void gen_random(char *, const int);
 
+/* -----------------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
+ * MAIN
+ * /////////////////////////////////////////////////////////////////////////////
+ */
 int main(int argc, char **argv) {
 
 	menu_principal();
@@ -29,6 +41,11 @@ int main(int argc, char **argv) {
 	return 0;
 }
 
+/* -----------------------------------------------------------------------------
+ * MENU PRINCIPAL
+ * Imprime o menu principal
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 void menu_principal() {
 	int opcao;
 
@@ -57,6 +74,11 @@ void menu_principal() {
 	} while (opcao != 9);
 }
 
+/* -----------------------------------------------------------------------------
+ * LER
+ * Ler opcao
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 int ler_opcao () {
 	int op;
 
@@ -66,6 +88,11 @@ int ler_opcao () {
 	return op;
 }
 
+/* -----------------------------------------------------------------------------
+ * MENU JOGAR
+ * Imprime o menu para jogar
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 void menu_jogar() {
 	int opcao;
 	FILE *f;
@@ -96,15 +123,17 @@ void menu_jogar() {
 	}
 }
 
+/* -----------------------------------------------------------------------------
+ * INICIALIZAR ARQUIVO
+ * Abre o arquivo e inicializa o arquivo com valores padroes
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 FILE* inicializar_arquivo() {
 
 	int stringTam;
 
-<<<<<<< HEAD
+
 	printf("Entre com o tamanho da string: ");
-=======
-	printf("Entre com o tamanho da string");
->>>>>>> 0ab2665f31c2672b69513e65ce3453645370c16d
 	scanf("%d", &stringTam);
 
 	char *stringAleat = malloc(stringTam + 1);
@@ -115,6 +144,11 @@ FILE* inicializar_arquivo() {
 
 }
 
+/* -----------------------------------------------------------------------------
+ * VERSUS JOGADOR
+ * Jogar Versus Jogador
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 void versus_jogador(FILE* f) {
 	int a, b, jogadas = 0;
 
@@ -135,9 +169,7 @@ void versus_jogador(FILE* f) {
 		}while(a < 0 || a > 8);
 		tab[a] = 0;
 		jogadas ++;
-		if(jogadas == 1){
-			salvar_jogada (f, tab);
-		}
+		salvar_jogada (f, tab);
 		imprimir_tabuleiro(tab);
 		b = terminou_jogo(tab);
 		if(b == 1){
@@ -164,6 +196,7 @@ void versus_jogador(FILE* f) {
 		}while(a < 0 || a > 8);
 		tab[a] = 1;
 		jogadas ++;
+		salvar_jogada (f, tab);
 		imprimir_tabuleiro(tab);
 		b = terminou_jogo(tab);
 		if(b == 1){
@@ -186,6 +219,11 @@ void versus_jogador(FILE* f) {
 
 }
 
+/* -----------------------------------------------------------------------------
+ * VERSUS COMPUTADOR
+ * Jogar Versus Computador
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 void versus_computador(FILE* f){
 	int a, b, d, e, g;
 	int jogadas = 0;
@@ -209,9 +247,7 @@ void versus_computador(FILE* f){
 		}while(a < 0 || a > 8);
 		tab[a] = 0;
 		jogadas++;
-		if(jogadas == 1){
-			salvar_jogada (f, tab);
-		}
+		salvar_jogada (f, tab);
 		imprimir_tabuleiro(tab);
 		printf("\n");
 		b = terminou_jogo(tab);
@@ -233,6 +269,7 @@ void versus_computador(FILE* f){
 		}while(tab[d] != 2);
 		tab[d] = 1;
 		jogadas++;
+		salvar_jogada (f, tab);
 		imprimir_tabuleiro(tab);
 		printf("\n");
 		b = terminou_jogo(tab);
@@ -250,22 +287,53 @@ void versus_computador(FILE* f){
 	}while(b != 0 || b != 1);
 }
 
-//esta gravando sempre 0 independente de quem ganha
+/* -----------------------------------------------------------------------------
+ * SALVAR RESULTADO
+ * Salva o resultado do jogo no arquivo
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 void salvar_resultado (FILE *f, int res) {
 	rewind(f);
 	fwrite(&res, sizeof(res), 1, f);
 }
 
+/* -----------------------------------------------------------------------------
+ * SALVAR DURACAO
+ * Salva a duração (numero de jogadas) da partida no arquivo
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 void salvar_duracao (FILE *f, int dur) {
 	fseek(f, sizeof(int), SEEK_SET);
 	fwrite(&dur, sizeof(dur), 1, f);
 }
 
+/* -----------------------------------------------------------------------------
+ * SALVAR JOGADA
+ * Salva a jogada (estado do tabuleiro) no arquivo
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 void salvar_jogada (FILE *f, int tab[]) {
-	fseek(f, 2*sizeof(int), SEEK_SET);
-	fwrite(tab, 9*sizeof(int), 1, f);
+	int i, j=0;
+	for(i=0;i<9;i++){
+		if(tab[i] == 0 || tab[i] == 1){
+			j++;
+		}
+	}
+	if(j==1){
+		fseek(f, 2*sizeof(int), SEEK_SET);
+		fwrite(tab, 9*sizeof(int), 1, f);
+	}else{
+		fseek(f, 8+((j-1)*36), SEEK_SET);
+		fwrite(tab, 9*sizeof(int), 1, f);
+	}
+	
 }
 
+/* -----------------------------------------------------------------------------
+ * IMPRIMIR_TABULEIRO
+ * Recebe uma matriz e imprime o tabuleiro.
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 void imprimir_tabuleiro(int tab[]) {
 	int i, j;
 
@@ -289,6 +357,11 @@ void imprimir_tabuleiro(int tab[]) {
 	}
 }
 
+/* -----------------------------------------------------------------------------
+ * TERMINOU JOGO
+ * Verifica se o jogo terminou
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 int terminou_jogo(int tab[]) {
 	int i;
 
@@ -319,6 +392,11 @@ int terminou_jogo(int tab[]) {
 	return -1;
 }
 
+/* -----------------------------------------------------------------------------
+ * MENU CARREGAR ARQUIVO
+ * Imprime o menu para carregar do arquivo
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 void menu_carregar_arquivo() {
 	FILE *f;
 	int opcao, n;
@@ -347,7 +425,7 @@ void menu_carregar_arquivo() {
 
 		case 2:
 			if (f == NULL) {
-				printf("Ã‰ preciso primeiramente carregar um arquivo!");
+				printf("É preciso primeiramente carregar um arquivo!");
 			}
 			else {
 				exibir_resultado(f);
@@ -356,7 +434,7 @@ void menu_carregar_arquivo() {
 
 		case 3:
 			if (f == NULL) {
-						printf("Ã‰ preciso primeiramente carregar um arquivo!");
+						printf("É preciso primeiramente carregar um arquivo!");
 			}
 			else {
 				exibir_duracao(f);
@@ -365,7 +443,7 @@ void menu_carregar_arquivo() {
 
 		case 4:
 			if (f == NULL) {
-						printf("Ã‰ preciso primeiramente carregar um arquivo!");
+						printf("É preciso primeiramente carregar um arquivo!");
 			}
 			else {
 				printf("Entre com a jogada a ser exibida: ");
@@ -382,10 +460,20 @@ void menu_carregar_arquivo() {
 	} while (opcao != 5);
 }
 
+/* -----------------------------------------------------------------------------
+ * CARREGAR ARQUIVO
+ * Abre o arquivo com o nome fornecido como parametro
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 FILE *carregar(char* filename) {
 	FILE *f = fopen(filename, "rb");
 }
 
+/* -----------------------------------------------------------------------------
+ * EXIBIR RESULTADO
+ * Le do arquivo e exibe o resultado da partida
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 void exibir_resultado(FILE* f) {
 	int a;
 	rewind(f);
@@ -393,6 +481,11 @@ void exibir_resultado(FILE* f) {
 	printf("%d\n", a);
 }
 
+/* -----------------------------------------------------------------------------
+ * EXIBIR DURACAO
+ * Le do arquivo e exibe a duracao (numero de jogadas)
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 void exibir_duracao(FILE* f) {
 	int a;
 	fseek(f, sizeof(int), SEEK_SET);
@@ -400,6 +493,11 @@ void exibir_duracao(FILE* f) {
 	printf("%d\n", a);
 }
 
+/* -----------------------------------------------------------------------------
+ * EXIBIR JOGADA
+ * Le do arquivo e exibe na tela o estado do tabuleiro na jogada n fornecida
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 void exibir_jogada(FILE* f, int n) {
 	int a;
 	int i;
@@ -408,7 +506,6 @@ void exibir_jogada(FILE* f, int n) {
 		fseek(f, 2*sizeof(int), SEEK_SET);
 		for(i=0; i<9; i++){
 			fread(&a, sizeof(a), 1, f);
-			//printf("%d\n", a);
 			if(a == 0){
 				printf(" O ");
 			}if(a == 1){
@@ -422,31 +519,41 @@ void exibir_jogada(FILE* f, int n) {
 				printf("|");
 			}
 		}
+	}else{
+		fseek(f, 8+((n-1)*36), SEEK_SET);
+		for(i=0; i<9; i++){
+			fread(&a, sizeof(a), 1, f);
+			if(a == 0){
+				printf(" O ");
+			}if(a == 1){
+				printf(" X ");
+			}if(a == 2){
+				printf("   ");
+			}
+			if(i == 2 || i == 5 || i == 8){
+				printf("\n");
+			}else{
+				printf("|");
+			}
+		}	
 	}
 }
 
-
-
+/* -----------------------------------------------------------------------------
+ * GEN RANDOM
+ * Gera uma string aleatoria com o tamanho len passado como parametro
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 void gen_random(char *s, const int len) {
 	srand(time(NULL));
     static const char alphanum[] =
         "0123456789"
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         "abcdefghijklmnopqrstuvwxyz";
-<<<<<<< HEAD
 	int i;
     for (i = 0; i < len; ++i) {
-=======
-
-    for (int i = 0; i < len; ++i) {
->>>>>>> 0ab2665f31c2672b69513e65ce3453645370c16d
         s[i] = alphanum[rand() % (sizeof(alphanum) - 1)];
     }
 
     s[len] = 0;
-
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> 0ab2665f31c2672b69513e65ce3453645370c16d
