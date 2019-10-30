@@ -100,7 +100,11 @@ FILE* inicializar_arquivo() {
 
 	int stringTam;
 
+<<<<<<< HEAD
 	printf("Entre com o tamanho da string: ");
+=======
+	printf("Entre com o tamanho da string");
+>>>>>>> 0ab2665f31c2672b69513e65ce3453645370c16d
 	scanf("%d", &stringTam);
 
 	char *stringAleat = malloc(stringTam + 1);
@@ -343,7 +347,7 @@ void menu_carregar_arquivo() {
 
 		case 2:
 			if (f == NULL) {
-				printf("É preciso primeiramente carregar um arquivo!");
+				printf("Ã‰ preciso primeiramente carregar um arquivo!");
 			}
 			else {
 				exibir_resultado(f);
@@ -352,7 +356,7 @@ void menu_carregar_arquivo() {
 
 		case 3:
 			if (f == NULL) {
-						printf("É preciso primeiramente carregar um arquivo!");
+						printf("Ã‰ preciso primeiramente carregar um arquivo!");
 			}
 			else {
 				exibir_duracao(f);
@@ -361,7 +365,7 @@ void menu_carregar_arquivo() {
 
 		case 4:
 			if (f == NULL) {
-						printf("É preciso primeiramente carregar um arquivo!");
+						printf("Ã‰ preciso primeiramente carregar um arquivo!");
 			}
 			else {
 				printf("Entre com a jogada a ser exibida: ");
@@ -429,12 +433,20 @@ void gen_random(char *s, const int len) {
         "0123456789"
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         "abcdefghijklmnopqrstuvwxyz";
+<<<<<<< HEAD
 	int i;
     for (i = 0; i < len; ++i) {
+=======
+
+    for (int i = 0; i < len; ++i) {
+>>>>>>> 0ab2665f31c2672b69513e65ce3453645370c16d
         s[i] = alphanum[rand() % (sizeof(alphanum) - 1)];
     }
 
     s[len] = 0;
 
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0ab2665f31c2672b69513e65ce3453645370c16d
