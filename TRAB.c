@@ -398,6 +398,15 @@ void versus_computador_hard(FILE* f){
 		else if(tab[2] == 2 && tab[4] == 0 && tab[6] == 0){tab[2] = 1;}
 					
 		else if(tab[4] == 2){tab[4] = 1;}
+		else if((tab[0] == 0 && tab[8] == 0) || (tab[2] == 0 && tab[6] == 0)){
+						  	 if(tab[1] == 2){tab[1] = 1;}
+						else if(tab[3] == 2){tab[3] = 1;}
+						else if(tab[5] == 2){tab[5] = 1;}
+						else if(tab[7] == 2){tab[7] = 1;}}
+					else if(tab[0] == 2){tab[0] = 1;}
+					else if(tab[2] == 2){tab[2] = 1;}
+					else if(tab[6] == 2){tab[6] = 1;}
+					else if(tab[8] == 2){tab[8] = 1;}
 		else{
 			do{
 				srand((unsigned)time(NULL));
