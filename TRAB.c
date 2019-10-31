@@ -14,6 +14,7 @@ int ler_opcao();
 int terminou_jogo(int []);
 void versus_computador(FILE* f);
 void versus_jogador(FILE*);
+void versus_computador_hard(FILE* f);
 
 /*
  * Prototipos manipulacao de arquivos
@@ -94,7 +95,7 @@ int ler_opcao () {
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 void menu_jogar() {
-	int opcao;
+	int opcao, op;
 	FILE *f;
 
 	printf("~~~~~~~~~~~~~ JOGAR ~~~~~~~~~~~~~~~~~\n"
@@ -112,10 +113,20 @@ void menu_jogar() {
 		break;
 
 	case 2:
-		f = inicializar_arquivo();
-		versus_computador(f);
-		fclose(f);
-		break;
+		printf("[1] - Easy\n");
+		printf("[2] - Hard\n");
+		scanf("%d", &op);
+		if(op == 1){
+			f = inicializar_arquivo();
+			versus_computador(f);
+			fclose(f);
+			break;
+		}else{
+			f = inicializar_arquivo();
+			versus_computador_hard(f);
+			fclose(f);
+			break;
+		}		
 
 	case 3:
 		return;
@@ -131,10 +142,9 @@ void menu_jogar() {
 FILE* inicializar_arquivo() {
 
 	int stringTam;
-
-
-	printf("Entre com o tamanho da string: ");
+	printf("Entre com a quantidade de caracteres para nomear o arquivo aleatoriamente: ");
 	scanf("%d", &stringTam);
+	system("cls");
 
 	char *stringAleat = malloc(stringTam + 1);
 
@@ -225,7 +235,7 @@ void versus_jogador(FILE* f) {
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 void versus_computador(FILE* f){
-	int a, b, d, e, g;
+	int a, b, d;
 	int jogadas = 0;
 
 	//TABULEIRO EM BRANCO
@@ -263,7 +273,7 @@ void versus_computador(FILE* f){
 			break;
 		}
 
-		srand(time(NULL));
+		srand((unsigned)time(NULL));
 		do{
 			d = rand() % 9;
 		}while(tab[d] != 2);
@@ -285,6 +295,134 @@ void versus_computador(FILE* f){
 			break;
 		}
 	}while(b != 0 || b != 1);
+}
+
+/* -----------------------------------------------------------------------------
+ * VERSUS COMPUTADOR MODO HARD 
+ * Jogar Versus Computador - Inteligencia Artificial 
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
+void versus_computador_hard(FILE* f){
+	int a, b, d;
+	int jogadas = 0;
+
+	//TABULEIRO EM BRANCO
+	int tab[9] = {2, 2, 2, 2, 2, 2, 2, 2, 2};
+
+	if(f == NULL){
+		printf("Nao foi possivel abrir o arquivo.\n");
+		system("pause");
+		exit(1);
+	}
+
+	printf("'O' Jogador e 'X' Computador, respectivamente\n");
+	do{
+		printf("0 | 1 | 2\n3 | 4 | 5\n6 | 7 | 8\n");
+		do{
+			printf("Entre com uma posicao entre 0 e 8 conforme o exemplo acima: ");
+			scanf("%d", &a);
+			if(tab[a] == 0 || tab[a] == 1){a=9; printf("jogada invalida!\n\n");}
+		}while(a < 0 || a > 8);
+		tab[a] = 0;
+		jogadas++;
+		salvar_jogada (f, tab);
+		imprimir_tabuleiro(tab);
+		printf("\n");
+		b = terminou_jogo(tab);
+		if(b == 0){
+			printf("Voce venceu\n");
+			salvar_resultado (f, b);
+			salvar_duracao (f, jogadas);
+			break;
+		}if(jogadas == 9){
+			printf("Empate\n");
+			salvar_resultado (f, b);
+			salvar_duracao (f, jogadas);
+			break;
+		}
+
+					//linhas
+			if(tab[0] == 1 && tab[1] == 1 && tab[2] == 2){tab[2] = 1;}
+		else if(tab[3] == 1 && tab[4] == 1 && tab[5] == 2){tab[5] = 1;}
+		else if(tab[6] == 1 && tab[7] == 1 && tab[8] == 2){tab[8] = 1;}
+		else if(tab[0] == 1 && tab[1] == 2 && tab[2] == 1){tab[1] = 1;}
+		else if(tab[3] == 1 && tab[4] == 2 && tab[5] == 1){tab[4] = 1;}
+		else if(tab[6] == 1 && tab[7] == 2 && tab[8] == 1){tab[7] = 1;}
+		else if(tab[0] == 2 && tab[1] == 1 && tab[2] == 1){tab[0] = 1;}
+		else if(tab[3] == 2 && tab[4] == 1 && tab[5] == 1){tab[3] = 1;}
+		else if(tab[6] == 2 && tab[7] == 1 && tab[8] == 1){tab[6] = 1;}
+					//colunas
+		else if(tab[0] == 1 && tab[3] == 1 && tab[6] == 2){tab[6] = 1;}
+		else if(tab[1] == 1 && tab[4] == 1 && tab[7] == 2){tab[7] = 1;}
+		else if(tab[2] == 1 && tab[5] == 1 && tab[8] == 2){tab[8] = 1;}
+		else if(tab[0] == 1 && tab[3] == 2 && tab[6] == 1){tab[3] = 1;}
+		else if(tab[1] == 1 && tab[4] == 2 && tab[7] == 1){tab[4] = 1;}
+		else if(tab[2] == 1 && tab[5] == 2 && tab[8] == 1){tab[5] = 1;}
+		else if(tab[0] == 2 && tab[3] == 1 && tab[6] == 1){tab[0] = 1;}
+		else if(tab[1] == 2 && tab[4] == 1 && tab[7] == 1){tab[1] = 1;}
+		else if(tab[2] == 2 && tab[5] == 1 && tab[8] == 1){tab[2] = 1;}
+					//diagonais
+		else if(tab[0] == 1 && tab[4] == 1 && tab[8] == 2){tab[8] = 1;}
+		else if(tab[0] == 1 && tab[4] == 2 && tab[8] == 1){tab[4] = 1;}
+		else if(tab[0] == 2 && tab[4] == 1 && tab[8] == 1){tab[0] = 1;}
+		else if(tab[2] == 1 && tab[4] == 1 && tab[6] == 2){tab[6] = 1;}
+		else if(tab[2] == 1 && tab[4] == 2 && tab[6] == 1){tab[4] = 1;}
+		else if(tab[2] == 2 && tab[4] == 1 && tab[6] == 1){tab[2] = 1;}
+					
+					//linhas
+		else if(tab[0] == 0 && tab[1] == 0 && tab[2] == 2){tab[2] = 1;}
+		else if(tab[3] == 0 && tab[4] == 0 && tab[5] == 2){tab[5] = 1;}
+		else if(tab[6] == 0 && tab[7] == 0 && tab[8] == 2){tab[8] = 1;}
+		else if(tab[0] == 0 && tab[1] == 2 && tab[2] == 0){tab[1] = 1;}
+		else if(tab[3] == 0 && tab[4] == 2 && tab[5] == 0){tab[4] = 1;}
+		else if(tab[6] == 0 && tab[7] == 2 && tab[8] == 0){tab[7] = 1;}
+		else if(tab[0] == 2 && tab[1] == 0 && tab[2] == 0){tab[0] = 1;}
+		else if(tab[3] == 2 && tab[4] == 0 && tab[5] == 0){tab[3] = 1;}
+		else if(tab[6] == 2 && tab[7] == 0 && tab[8] == 0){tab[6] = 1;}
+					//colunas
+		else if(tab[0] == 0 && tab[3] == 0 && tab[6] == 2){tab[6] = 1;}
+		else if(tab[1] == 0 && tab[4] == 0 && tab[7] == 2){tab[7] = 1;}
+		else if(tab[2] == 0 && tab[5] == 0 && tab[8] == 2){tab[8] = 1;}
+		else if(tab[0] == 0 && tab[3] == 2 && tab[6] == 0){tab[3] = 1;}
+		else if(tab[1] == 0 && tab[4] == 2 && tab[7] == 0){tab[4] = 1;}
+		else if(tab[2] == 0 && tab[5] == 2 && tab[8] == 0){tab[5] = 1;}
+		else if(tab[0] == 2 && tab[3] == 0 && tab[6] == 0){tab[0] = 1;}
+		else if(tab[1] == 2 && tab[4] == 0 && tab[7] == 0){tab[1] = 1;}
+		else if(tab[2] == 2 && tab[5] == 0 && tab[8] == 0){tab[2] = 1;}
+					//diagonais
+		else if(tab[0] == 0 && tab[4] == 0 && tab[8] == 2){tab[8] = 1;}
+		else if(tab[0] == 0 && tab[4] == 2 && tab[8] == 0){tab[4] = 1;}
+		else if(tab[0] == 2 && tab[4] == 0 && tab[8] == 0){tab[0] = 1;}
+		else if(tab[2] == 0 && tab[4] == 0 && tab[6] == 2){tab[6] = 1;}
+		else if(tab[2] == 0 && tab[4] == 2 && tab[6] == 0){tab[4] = 1;}
+		else if(tab[2] == 2 && tab[4] == 0 && tab[6] == 0){tab[2] = 1;}
+					
+		else if(tab[4] == 2){tab[4] = 1;}
+		else{
+			do{
+				srand((unsigned)time(NULL));
+				d = rand() % 9;
+			}while(tab[d] != 2);
+			tab[d] = 1;
+			
+		}
+		jogadas++;
+		salvar_jogada (f, tab);
+		imprimir_tabuleiro(tab);
+		printf("\n");
+		b = terminou_jogo(tab);
+		if(b == 1){
+			printf("Voce perdeu\n");
+			salvar_resultado (f, b);
+			salvar_duracao (f, jogadas);
+			break;
+		}if(jogadas == 9){
+			printf("Empate\n");
+			salvar_resultado (f, b);
+			salvar_duracao (f, jogadas);
+			break;
+		}
+	}while(b != 0 || b != 1);	
 }
 
 /* -----------------------------------------------------------------------------
