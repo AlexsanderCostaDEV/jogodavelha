@@ -60,10 +60,12 @@ void menu_principal() {
 
 		switch(opcao) {
 		case 1:
+			system("cls");
 			menu_jogar();
 			break;
 
 		case 2:
+			system("cls");
 			menu_carregar_arquivo();
 			break;
 
@@ -71,6 +73,10 @@ void menu_principal() {
 			printf("Programa finalizado!");
 			return;
 			break;
+		default:
+			system("cls");
+			printf("Opcao invalida!\n");
+			system("pause");
 		}
 	} while (opcao != 9);
 }
@@ -107,15 +113,17 @@ void menu_jogar() {
 
 	switch(opcao) {
 	case 1:
+		system("cls");
 		f = inicializar_arquivo();
 		versus_jogador(f);
 		fclose(f);
 		break;
 
 	case 2:
+		system("cls");
 		printf("[1] - Easy\n");
 		printf("[2] - Hard\n");
-		scanf("%d", &op);
+		op = ler_opcao();
 		if(op == 1){
 			f = inicializar_arquivo();
 			versus_computador(f);
@@ -131,6 +139,10 @@ void menu_jogar() {
 	case 3:
 		return;
 		break;
+	default:
+		system("cls");
+		printf("Opcao invalida!\n");
+		system("pause");
 	}
 }
 
@@ -140,18 +152,12 @@ void menu_jogar() {
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 FILE* inicializar_arquivo() {
-
 	int stringTam;
-	printf("Entre com a quantidade de caracteres para nomear o arquivo aleatoriamente: ");
-	scanf("%d", &stringTam);
-	system("cls");
-
+	srand((unsigned)time(NULL));
+	stringTam = rand() % 11;	
 	char *stringAleat = malloc(stringTam + 1);
-
     gen_random(stringAleat, stringTam);
-
 	fopen(stringAleat, "wb");
-
 }
 
 /* -----------------------------------------------------------------------------
@@ -171,15 +177,16 @@ void versus_jogador(FILE* f) {
 	}
 	printf("'O' e 'X', respectivamente\n");
 	do{
-		printf("0 | 1 | 2\n3 | 4 | 5\n6 | 7 | 8\n");
+		printf("\n 1 | 2 | 3\n 4 | 5 | 6\n 7 | 8 | 9\n");
 		do{
-			printf("Entre com uma posicao entre 0 e 8 conforme o exemplo acima: ");
-			scanf("%d", &a);
-			if(tab[a] == 0 || tab[a] == 1){a=9; printf("jogada invalida!\n\n");}
-		}while(a < 0 || a > 8);
-		tab[a] = 0;
+			printf("Entre com uma posicao entre 1 e 9 conforme o exemplo acima: ");
+			a = ler_opcao();
+			if(tab[a-1] == 0 || tab[a-1] == 1){a=10; printf("jogada invalida!\n\n");}
+		}while(a < 1 || a > 9);
+		tab[a-1] = 0;
 		jogadas ++;
 		salvar_jogada (f, tab);
+		system("cls");
 		imprimir_tabuleiro(tab);
 		b = terminou_jogo(tab);
 		if(b == 1){
@@ -198,15 +205,16 @@ void versus_jogador(FILE* f) {
 			salvar_duracao (f, jogadas);
 			break;
 		}
-		printf("0 | 1 | 2\n3 | 4 | 5\n6 | 7 | 8\n");
+		printf("\n 1 | 2 | 3\n 4 | 5 | 6\n 7 | 8 | 9\n");
 		do{
-			printf("Entre com uma posicao entre 0 e 8 conforme o exemplo acima: ");
-			scanf("%d", &a);
-			if(tab[a] == 0 || tab[a] == 1){a=9; printf("jogada invalida!\n\n");}
-		}while(a < 0 || a > 8);
-		tab[a] = 1;
+			printf("Entre com uma posicao entre 1 e 9 conforme o exemplo acima: ");
+			a = ler_opcao();
+			if(tab[a-1] == 0 || tab[a-1] == 1){a=10; printf("jogada invalida!\n\n");}
+		}while(a < 1 || a > 9);
+		tab[a-1] = 1;
 		jogadas ++;
 		salvar_jogada (f, tab);
+		system("cls");
 		imprimir_tabuleiro(tab);
 		b = terminou_jogo(tab);
 		if(b == 1){
@@ -249,15 +257,16 @@ void versus_computador(FILE* f){
 
 	printf("'O' Jogador e 'X' Computador, respectivamente\n");
 	do{
-		printf("0 | 1 | 2\n3 | 4 | 5\n6 | 7 | 8\n");
+		printf("\n 1 | 2 | 3\n 4 | 5 | 6\n 7 | 8 | 9\n");
 		do{
-			printf("Entre com uma posicao entre 0 e 8 conforme o exemplo acima: ");
-			scanf("%d", &a);
-			if(tab[a] == 0 || tab[a] == 1){a=9; printf("jogada invalida!\n\n");}
-		}while(a < 0 || a > 8);
-		tab[a] = 0;
+			printf("Entre com uma posicao entre 1 e 9 conforme o exemplo acima: ");
+			a = ler_opcao();
+			if(tab[a-1] == 0 || tab[a-1] == 1){a=10; printf("jogada invalida!\n\n");}
+		}while(a < 1 || a > 9);
+		tab[a-1] = 0;
 		jogadas++;
 		salvar_jogada (f, tab);
+		system("cls");
 		imprimir_tabuleiro(tab);
 		printf("\n");
 		b = terminou_jogo(tab);
@@ -280,6 +289,7 @@ void versus_computador(FILE* f){
 		tab[d] = 1;
 		jogadas++;
 		salvar_jogada (f, tab);
+		system("cls");
 		imprimir_tabuleiro(tab);
 		printf("\n");
 		b = terminou_jogo(tab);
@@ -317,15 +327,16 @@ void versus_computador_hard(FILE* f){
 
 	printf("'O' Jogador e 'X' Computador, respectivamente\n");
 	do{
-		printf("0 | 1 | 2\n3 | 4 | 5\n6 | 7 | 8\n");
+		printf("\n 1 | 2 | 3\n 4 | 5 | 6\n 7 | 8 | 9\n");
 		do{
-			printf("Entre com uma posicao entre 0 e 8 conforme o exemplo acima: ");
-			scanf("%d", &a);
-			if(tab[a] == 0 || tab[a] == 1){a=9; printf("jogada invalida!\n\n");}
-		}while(a < 0 || a > 8);
-		tab[a] = 0;
+			printf("Entre com uma posicao entre 1 e 9 conforme o exemplo acima: ");
+			a = ler_opcao();
+			if(tab[a-1] == 0 || tab[a-1] == 1){a=10; printf("jogada invalida!\n\n");}
+		}while(a < 1 || a > 9);
+		tab[a-1] = 0;
 		jogadas++;
 		salvar_jogada (f, tab);
+		system("cls");
 		imprimir_tabuleiro(tab);
 		printf("\n");
 		b = terminou_jogo(tab);
@@ -342,7 +353,7 @@ void versus_computador_hard(FILE* f){
 		}
 
 					//linhas
-			if(tab[0] == 1 && tab[1] == 1 && tab[2] == 2){tab[2] = 1;}
+			 if(tab[0] == 1 && tab[1] == 1 && tab[2] == 2){tab[2] = 1;}
 		else if(tab[3] == 1 && tab[4] == 1 && tab[5] == 2){tab[5] = 1;}
 		else if(tab[6] == 1 && tab[7] == 1 && tab[8] == 2){tab[8] = 1;}
 		else if(tab[0] == 1 && tab[1] == 2 && tab[2] == 1){tab[1] = 1;}
@@ -399,14 +410,14 @@ void versus_computador_hard(FILE* f){
 					
 		else if(tab[4] == 2){tab[4] = 1;}
 		else if((tab[0] == 0 && tab[8] == 0) || (tab[2] == 0 && tab[6] == 0)){
-						  	 if(tab[1] == 2){tab[1] = 1;}
-						else if(tab[3] == 2){tab[3] = 1;}
-						else if(tab[5] == 2){tab[5] = 1;}
-						else if(tab[7] == 2){tab[7] = 1;}}
-					else if(tab[0] == 2){tab[0] = 1;}
-					else if(tab[2] == 2){tab[2] = 1;}
-					else if(tab[6] == 2){tab[6] = 1;}
-					else if(tab[8] == 2){tab[8] = 1;}
+				 if(tab[1] == 2){tab[1] = 1;}
+			else if(tab[3] == 2){tab[3] = 1;}
+			else if(tab[5] == 2){tab[5] = 1;}
+			else if(tab[7] == 2){tab[7] = 1;}}
+			else if(tab[0] == 2){tab[0] = 1;}
+			else if(tab[2] == 2){tab[2] = 1;}
+			else if(tab[6] == 2){tab[6] = 1;}
+			else if(tab[8] == 2){tab[8] = 1;}
 		else{
 			do{
 				srand((unsigned)time(NULL));
@@ -417,6 +428,7 @@ void versus_computador_hard(FILE* f){
 		}
 		jogadas++;
 		salvar_jogada (f, tab);
+		system("cls");
 		imprimir_tabuleiro(tab);
 		printf("\n");
 		b = terminou_jogo(tab);
@@ -566,8 +578,8 @@ void menu_carregar_arquivo() {
 		case 1:
 			printf("Entre com o nome do arquivo: ");
 			scanf("%s", filename);
-
 			f = carregar(filename);
+			system("cls");
 			break;
 
 		case 2:
@@ -575,6 +587,7 @@ void menu_carregar_arquivo() {
 				printf("É preciso primeiramente carregar um arquivo!");
 			}
 			else {
+				system("cls");
 				exibir_resultado(f);
 			}
 			break;
@@ -584,6 +597,7 @@ void menu_carregar_arquivo() {
 						printf("É preciso primeiramente carregar um arquivo!");
 			}
 			else {
+				system("cls");
 				exibir_duracao(f);
 			}
 			break;
@@ -593,16 +607,22 @@ void menu_carregar_arquivo() {
 						printf("É preciso primeiramente carregar um arquivo!");
 			}
 			else {
+				system("cls");
 				printf("Entre com a jogada a ser exibida: ");
 				scanf("%d", &n);
-
+				system("cls");
 				exibir_jogada(f, n);
 			}
 			break;
 
 		case 5:
+			system("cls");
 			return;
 			break;
+		default:
+			system("cls");
+			printf("Opcao invalida!\n");
+			system("pause");
 		}
 	} while (opcao != 5);
 }
@@ -625,7 +645,13 @@ void exibir_resultado(FILE* f) {
 	int a;
 	rewind(f);
 	fread(&a, sizeof(a), 1, f);
-	printf("%d\n", a);
+	if(a == 0){
+		printf("Vencedor = O\n");
+	}else if(a == 1){
+		printf("Vencedor = X\n");
+	}else{
+		printf("Empate!\n");
+	}
 }
 
 /* -----------------------------------------------------------------------------
@@ -637,7 +663,7 @@ void exibir_duracao(FILE* f) {
 	int a;
 	fseek(f, sizeof(int), SEEK_SET);
 	fread(&a, sizeof(a), 1, f);
-	printf("%d\n", a);
+	printf("%d Jogadas\n", a);
 }
 
 /* -----------------------------------------------------------------------------
@@ -648,8 +674,9 @@ void exibir_duracao(FILE* f) {
 void exibir_jogada(FILE* f, int n) {
 	int a;
 	int i;
-
+	
 	if(n == 1){
+		system("cls");
 		fseek(f, 2*sizeof(int), SEEK_SET);
 		for(i=0; i<9; i++){
 			fread(&a, sizeof(a), 1, f);
@@ -667,6 +694,7 @@ void exibir_jogada(FILE* f, int n) {
 			}
 		}
 	}else{
+		system("cls");
 		fseek(f, 8+((n-1)*36), SEEK_SET);
 		for(i=0; i<9; i++){
 			fread(&a, sizeof(a), 1, f);
