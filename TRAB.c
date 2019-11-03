@@ -1,3 +1,13 @@
+/**
+ * Data - 03/11/2019
+ * Laboratório de Programação II
+ * Jogo da Velha
+ * @author Alexsander Souza de Costa - UFGD - Sistemas de Informação
+ * @author Michael Lopes de Lima da Silva - UFGD - Sistemas de Informação
+ */
+
+
+
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
@@ -458,7 +468,7 @@ void salvar_resultado (FILE *f, int res) {
 
 /* -----------------------------------------------------------------------------
  * SALVAR DURACAO
- * Salva a dura��o (numero de jogadas) da partida no arquivo
+ * Salva a duração (numero de jogadas) da partida no arquivo
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 void salvar_duracao (FILE *f, int dur) {
@@ -584,7 +594,7 @@ void menu_carregar_arquivo() {
 
 		case 2:
 			if (f == NULL) {
-				printf("� preciso primeiramente carregar um arquivo!");
+				printf("É preciso primeiramente carregar um arquivo!");
 			}
 			else {
 				system("cls");
@@ -594,7 +604,7 @@ void menu_carregar_arquivo() {
 
 		case 3:
 			if (f == NULL) {
-						printf("� preciso primeiramente carregar um arquivo!");
+						printf("É preciso primeiramente carregar um arquivo!");
 			}
 			else {
 				system("cls");
@@ -604,7 +614,7 @@ void menu_carregar_arquivo() {
 
 		case 4:
 			if (f == NULL) {
-						printf("� preciso primeiramente carregar um arquivo!");
+						printf("É preciso primeiramente carregar um arquivo!");
 			}
 			else {
 				system("cls");
